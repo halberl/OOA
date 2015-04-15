@@ -5,23 +5,26 @@ from instruction_dictionary import inst_dict
 #NEEDS TO FLAG HAZARDS
 
 # 1 read file line by line.  
-instruction="move,#15,#04";
+instruction="ble,R31,R04";
 instruction = instruction.split(',');
-instruction_destination = instruction[1].split('#')[1];
-instruction_source = instruction[2].split('#')[1];
+instruction_destination = int(instruction[1].split('R')[1]);
+instruction_source = int(instruction[2].split('R')[1]);
 
 
 # 2 convert instructions into 32bit code
-print "dictionary['", instruction[0], "']: ", inst_dict[instruction[0]];
+print "dictionary['",instruction[0],"']: ", inst_dict[instruction[0]];
 OPCODE=inst_dict[instruction[0]];
 
 # convert decimal to binary
-print "inst_dest: ", instruction_destination;
-destination = bin(int(instruction_destination)); 
+print "DECIMAL inst_dest: ", instruction_destination
+destination = "{0:b}".format(instruction_destination).zfill(5)
+#y = "{0:b}".format(instruction_destination).zfill(5)
+#print y
+#"{0:b}".format(31).zfill(5)
 print "destination: ", destination;  
 
-print "inst_source: ", instruction_source;
-source = bin(int(instruction_source)); 
+print "DECIMAL inst_source: ", instruction_source;
+source = "{0:b}".format(instruction_source).zfill(5)
 print "source: ", source;  
 
 
