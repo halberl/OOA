@@ -1,7 +1,7 @@
 '''
-Filename: pipeline_stages.py
+Filename: assembly2Bin-classes.py
 Author:   Lucas Halbert
-Date:     4/15/15
+Date:     4/16/15
 Modified: 4/16/15
 Comment:  
 '''
@@ -9,35 +9,9 @@ import sys
 import re
 import json
 
-#NEEDS TO FLAG HAZARDS
-
-'''
-Class declarations for each stage of the pipeline
-'''
-class INSTRUCTIONFetch(object):
+class INSTRUCTIONEncode(object):
     '''
-    This class is used to fetch an instructions from the instruction memory and place it 
-    into the instruction register for decoding.
-    '''
-
-    def __init__(self, location):
-        '''
-        This constructor initializes
-        '''
-
-    def fetchFromMem(self):
-        '''
-        '''
-        # Open instruction memory object and fetch the instruction pointed to by the stack pointer
-
-        # Place the fetched instruction in the instruction register
-
-
-
-
-class INSTRUCTIONDecode(object):
-    '''
-    This class is used to decode instructions passed to it. The instruction dictionary
+    This class is used to encode instructions passed to it. The instruction dictionary
     contains all specific bit mappings for each instruction operand. 
     '''
 
@@ -64,9 +38,9 @@ class INSTRUCTIONDecode(object):
         #return self.inst_fields
 
 
-    def decodeOpField(self):
+    def encodeOpField(self):
         '''
-        This constructor decodes the OP field of the instruction.
+        This constructor encodes the OP field of the instruction.
         '''
 
         # Extract Instruction Operator from field 0
@@ -85,9 +59,9 @@ class INSTRUCTIONDecode(object):
         print("Instruction OP Binary:",self.inst_op_bin)
 
 
-    def decodeDestField(self):
+    def encodeDestField(self):
         '''
-        This constructor decodes the destination field of the instruction
+        This constructor encodes the destination field of the instruction
         '''
 
         # Extract instruction destination from field 1
@@ -104,9 +78,9 @@ class INSTRUCTIONDecode(object):
         print("Instruction Dest Binary:",self.inst_dest_bin)
 
 
-    def decodeSource1Field(self):
+    def encodeSource1Field(self):
         '''
-        This constructor decodes the source1 field of the instruction
+        This constructor encodes the source1 field of the instruction
         '''
 
         # Extract instruction source1 from field 2
@@ -123,9 +97,9 @@ class INSTRUCTIONDecode(object):
         print("Instruction source1 Binary:",self.inst_source1_bin)
 
 
-    def decodeSource2Field(self):
+    def encodeSource2Field(self):
         '''
-        This constructor decodes the source2 field of the instruction
+        This constructor encodes the source2 field of the instruction
         '''
 
         # Extract instruction source1 from field 3
@@ -142,7 +116,7 @@ class INSTRUCTIONDecode(object):
         print("Instruction source2 Binary:",self.inst_source2_bin)
 
 
-    def decodeImmediateValue(self):
+    def encodeImmediateValue(self):
         '''
         This constructor decodes the immediate value field of the instruction if self.immediate = 1
         '''
@@ -180,3 +154,129 @@ class INSTRUCTIONDecode(object):
         self.inst_bin = self.inst_bin.ljust(32, '0')
         print("Instruction Length:",len(self.inst_bin))
         print("Complete Instruction Binary:",self.inst_bin)
+
+
+'''
+# Extract instruction destination from field 1
+inst_dest = inst_fields[1]
+if int(inst_dest.split('$')[1]) > 31:
+    print("Register",inst_dest,"does not exist")
+    sys.exit(4)
+# Pad register location
+inst_dest_bin = "{0:b}".format(int(inst_fields[1].split('$')[1])).rjust(5, '0')
+
+## Check if the leading character is a $ or #
+#if inst_dest.find("$") == 0:
+#	# Destination is a register
+#	#print("Destination is a register number")
+#	inst_dest_bin = "{0:b}".format(int(inst_fields[1].split('$')[1])).rjust(5, '0')
+#elif inst_dest.find("#") == 0:
+#	# Destination is an immediate value
+#	#print("Destination is an immediate value")
+#	inst_dest_bin = "{0:b}".format(int(inst_fields[1].split('#')[1])).rjust(5, '0')
+#else:
+#	# Destination is corrupt
+#	print("Destination is corrupt! Fail out!")
+#	sys.exit(2)
+
+# Print instruction destination
+print("inst_dest:", inst_dest)
+print("inst_dest_bin:", inst_dest_bin)
+
+
+
+# Extract instruction source1 from field 2
+inst_source1 = inst_fields[2]
+# Pad register location
+inst_source1_bin = "{0:b}".format(int(inst_fields[2].split('$')[1])).rjust(5, '0')
+
+## Check if the leading character is a $ or #
+#if inst_source1.find("$") == 0:
+#        # Source1 is a register
+#        inst_source1_bin = "{0:b}".format(int(inst_fields[2].split('$')[1])).rjust(5, '0')
+#elif inst_source1.find("#") == 0:
+#        # Source1 is an immediate value
+#        inst_source1_bin = "{0:b}".format(int(inst_fields[2].split('#')[1])).rjust(5, '0')
+#else:   
+#        # Source1 is corrupt
+#        print("Source1 is corrupt! Fail out!")
+#        sys.exit(2)
+
+# Print instruction source1
+print("inst_source1:", inst_source1)
+print("inst_source1_bin:", inst_source1_bin)
+
+
+
+
+# Extract instruction source2 from field 3
+inst_source2 = inst_fields[3]
+
+# Check if the leading character is a $ or #
+if inst_source2.find("$") == 0:
+    # Source1 is a register
+    inst_source2_bin = "{0:b}".format(int(inst_fields[3].split('$')[1])).rjust(5, '0')
+elif inst_source2.find("#") == 0:
+    # Source1 is an immediate value
+    inst_source2_bin = "{0:b}".format(int(inst_fields[3].split('#')[1])).rjust(17, '0')
+else:   
+    # Source1 is corrupt
+    print("Source2 is corrupt! Fail out!")
+    sys.exit(2)
+# Print instruction source2
+print("inst_source2:", inst_source2)
+print("inst_source2_bin:", inst_source2_bin)
+
+
+# Combine OP, Dest, Source1, and Source2 into compiled binary
+instruction_binary = inst_op_bin + inst_dest_bin + inst_source1_bin + inst_source2_bin
+instruction_binary_len = len(instruction_binary)
+
+# Force 32 bit length
+instruction_binary = instruction_binary.ljust(32, '0')
+print("Instruction Length:",len(instruction_binary))
+print("Instruction Binary:",instruction_binary)
+
+
+
+# Print formatted instruction and binary
+print("|----------------------------------------------|")
+if immediate_operation == 1:
+    print("| OP    | DEST  | S1    | Immediate Val        |")
+    print("|",inst_op_bin,"|",inst_dest_bin,"|",inst_source1_bin,"|",inst_source2_bin,"   |")
+else:
+    print("| OP    | DEST  | S1    | S2    | Unused       |")
+    print("|",inst_op_bin,"|",inst_dest_bin,"|",inst_source1_bin,"|",inst_source2_bin,"|",32-instruction_binary_len,"bits      |")
+#print("|",inst_op_bin,"|",inst_dest_bin,"|",inst_source1_bin,"|",inst_source2_bin,"|",32-instruction_binary_len,"bits     |")
+#print("|",inst_op_bin,"|",inst_dest_bin,"|",inst_source1_bin,"|",inst_source2_bin,"| 00000000000 |")
+print("|----------------------------------------------|")
+#print(re.findall('.....', instruction_binary))
+
+#inst_dest = int(inst_fields[1].split('$')[1]);
+#instruction_source = int(instruction[2].split('$')[1]);
+
+
+# 2 convert instructions into 32bit code
+#print("dictionary['",instruction[0],"']: ", inst_dict[instruction[0]])
+#OPCODE=inst_dict[instruction[0]];
+
+# convert decimal to binary
+#print("DECIMAL inst_dest: ", instruction_destination)
+#destination = "{0:b}".format(instruction_destination).zfill(5)
+#y = "{0:b}".format(instruction_destination).zfill(5)
+#print y
+#"{0:b}".format(31).zfill(5)
+#print("destination: ", destination)
+
+#print("DECIMAL inst_source: ", instruction_source)
+#source = "{0:b}".format(instruction_source).zfill(5)
+#print("source: ", source)
+
+
+# 3 check for hazards
+'''
+
+
+
+
+
