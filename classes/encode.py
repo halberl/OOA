@@ -35,7 +35,6 @@ class INSTRUCTIONEncode(object):
         # Split instruction by "," and store in inst_fields
         self.inst_fields = self.instruction.split(',')
         #print("Instruction Fields:",self.inst_fields)
-        #return self.inst_fields
 
 
     def encodeOpField(self):
@@ -57,6 +56,8 @@ class INSTRUCTIONEncode(object):
         #print("Instruction OP:",self.inst_fields[0])
         #print("Instruction OP Binary:",self.inst_op_bin)
 
+        return self.inst_op_bin
+
 
     def encodeDestField(self):
         '''
@@ -75,6 +76,8 @@ class INSTRUCTIONEncode(object):
         self.inst_dest_bin = "{0:b}".format(int(self.inst_fields[1].split('$')[1])).rjust(5, '0')
         #print("Instruction Destination:",self.inst_dest)
         #print("Instruction Dest Binary:",self.inst_dest_bin)
+
+        return self.inst_dest_bin
 
 
     def encodeSource1Field(self):
@@ -95,6 +98,8 @@ class INSTRUCTIONEncode(object):
         #print("Instruction Source1:",self.inst_source1)
         #print("Instruction source1 Binary:",self.inst_source1_bin)
 
+        return self.inst_source1_bin
+
 
     def encodeSource2Field(self):
         '''
@@ -113,6 +118,8 @@ class INSTRUCTIONEncode(object):
         self.inst_source2_bin = "{0:b}".format(int(self.inst_fields[3].split('$')[1])).rjust(5, '0')
         #print("Instruction Source2:",self.inst_source1)
         #print("Instruction source2 Binary:",self.inst_source2_bin)
+
+        return self.inst_source2_bin
 
 
     def encodeImmediateValue(self):
@@ -134,6 +141,8 @@ class INSTRUCTIONEncode(object):
         #print("Instruction Immediate:",self.inst_immediate)
         #print("Instruction Immediate Binary:",self.inst_immediate_bin)
 
+        return self.inst_immediate_bin
+
 
     def constructByteCode(self):
         '''
@@ -154,3 +163,5 @@ class INSTRUCTIONEncode(object):
         self.inst_bin = self.inst_bin.ljust(32, '0')
         print("Instruction Length:",len(self.inst_bin))
         print("Complete Instruction Binary:",self.inst_bin)
+
+        return self.inst_bin

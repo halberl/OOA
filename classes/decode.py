@@ -3,38 +3,16 @@ Filename: decode.py
 Author:   Lucas Halbert
 Date:     4/17/15
 Modified: 4/17/15
-Comment:  
+Description: decodes binary to assembly 
 '''
 import sys
 import re
 import json
 
-#NEEDS TO FLAG HAZARDS
 
 '''
 Class declarations for each stage of the pipeline
 '''
-class INSTRUCTIONDecode(object):
-    '''
-    This class is used to fetch an instructions from the instruction memory and place it 
-    into the instruction register for decoding.
-    '''
-
-    def __init__(self, location):
-        '''
-        This constructor initializes
-        '''
-
-    def fetchFromMem(self):
-        '''
-        '''
-        # Open instruction memory object and fetch the instruction pointed to by the stack pointer
-
-        # Place the fetched instruction in the instruction register
-
-
-
-
 class INSTRUCTIONDecode(object):
     '''
     This class is used to decode instructions passed to it. The instruction dictionary
@@ -83,6 +61,8 @@ class INSTRUCTIONDecode(object):
             self.immediate = 0
         #print("Immediate?:",self.immediate)
 
+        return self.inst_op
+
 
     def decodeDestField(self):
         '''
@@ -102,6 +82,8 @@ class INSTRUCTIONDecode(object):
         self.inst_dest = "$" + str(int(self.inst_dest_bin, 2))
         #print("Instruction Dest:",self.inst_dest)
 
+        return self.inst_dest
+
 
     def decodeSource1Field(self):
         '''
@@ -120,6 +102,8 @@ class INSTRUCTIONDecode(object):
         self.inst_source1 = "$" + str(int(self.inst_source1_bin, 2))
         #print("Instruction Dest:",self.inst_source1)
 
+        return self.inst_source1
+
 
     def decodeSource2Field(self):
         '''
@@ -137,6 +121,8 @@ class INSTRUCTIONDecode(object):
         # Convert the extracted binary to a register number
         self.inst_source2 = "$" + str(int(self.inst_source2_bin, 2))
         #print("Instruction Dest:",self.inst_source2)
+
+        return self.inst_source2
 
 
     def decodeImmediateValue(self):
@@ -157,6 +143,8 @@ class INSTRUCTIONDecode(object):
         self.inst_immediate = "#" + str(int(self.inst_immediate_bin, 2))
         #print("Immediate Value:",self.inst_immediate)
 
+        return self.inst_immediate
+
 
     def constructInstruction(self):
         '''
@@ -172,3 +160,5 @@ class INSTRUCTIONDecode(object):
 
         #print("Instruction Length:",len(self.inst))
         print("Complete Instruction:",self.inst)
+
+        return self.inst
