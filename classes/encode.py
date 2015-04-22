@@ -26,6 +26,8 @@ class INSTRUCTIONEncode(object):
         '''
         # Read and Open dictionary file relative to root of project
         self.inst_dict = json.loads(open("dictionaries/instruction_dictionary.py").read())
+        # Swap keys and values of dictionary
+        self.inst_dict = dict(zip(self.inst_dict.values(),self.inst_dict.keys()))
         # Initialize instuction
         self.instruction = instruction
         #print("Instruction:",self.instruction)

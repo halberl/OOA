@@ -4,6 +4,7 @@
 Filename: assembly2Bin.py
 Author: Lucas Halbert
 Date:   04/17/15
+Modified: 04/21/15
 Description: This utility will encode assembly instructions to binary 
              and store in the specified file.
 '''
