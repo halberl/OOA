@@ -2,7 +2,7 @@
 Filename: alu.py
 Author:   Lucas Halbert
 Date:     4/22/15
-Modified: 4/22/15
+Modified: 4/23/15
 Description: Class declarations for different functions of the ALU (arithmetic logic unit) 
 '''
 import sys
@@ -36,9 +36,10 @@ class ALU(object):
 
 
     def executeOperation(self):
+        '''
+        This constructor calls the operator constructor based on the OP filed of the instruction
+        '''
                 
-        # map the operators to the function blocks
-        
         if self.operation == "ld":
             self.ld()
         elif self.operation == "st":
