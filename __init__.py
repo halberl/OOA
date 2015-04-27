@@ -1,7 +1,7 @@
 from hw import register
 from hw import mem_collection
 from assemblyfile2bin import FileToBin
-#from pipeline import pipeline
+from pipeline import pipeline
 import sys
 
 NUM_OF_REG=31
@@ -15,9 +15,15 @@ if SOURCE_FILE == "":
 BIN_FILE = "binFile.txt"
 
 def main():
-    #create registers
-    data_reg=[]
+    # Create Stack Pointer
+    stack_ptr=register()
 
+    # Create Instruction Register
+    inst_reg=register()
+
+    
+    # Create registers
+    data_reg=[]
     for it in range (0,NUM_OF_REG):
         data_reg.append(register())
         
@@ -62,7 +68,7 @@ def main():
     '''
     Pipeline Starts here
     '''
-    #pipeline(data_reg, data_mem, inst_mem)
+    pipeline(stack_ptr, inst_reg, data_reg, data_mem, inst_mem)
 
     # print element 2 of instruction memory
     print(inst_mem.load(1))
