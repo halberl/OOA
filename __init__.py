@@ -19,8 +19,7 @@ def main():
     data_reg=[]
 
     for it in range (0,NUM_OF_REG):
-        name="r{0}".format(it)
-        data_reg.append(register(name))
+        data_reg.append(register())
         
     #create memory
     inst_mem=mem_collection("inst", SIZE_OF_INST_MEM)
