@@ -71,11 +71,8 @@ def main():
     pipeline(stack_ptr, inst_reg, data_reg, data_mem, inst_mem)
 
     # print element 2 of instruction memory
-    print(inst_mem.load(1))
+    #print(inst_mem.load(1))
 
-
-    # Done??
-    print("Done converting to assembly.  Next send to instruction memory")
 
 
 if __name__ == "__main__":

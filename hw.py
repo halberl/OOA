@@ -10,7 +10,8 @@ class register:
         self.data = ALL_ZEROS
 
     def write(self, data):
-        self.data=data
+        # Pad data to 32 bits
+        self.data=str(data).rjust(32, '0')
 
     def read(self):
         return self.data
