@@ -157,11 +157,11 @@ class INSTRUCTIONEncode(object):
             self.inst_bin = self.inst_op_bin + self.inst_dest_bin + self.inst_source1_bin + self.inst_source1_bin
 
         self.inst_bin_len = len(self.inst_bin)
-        print("Instruction Length:",len(self.inst_bin))
+        #print("Instruction Length:",len(self.inst_bin))
 
         # Force 32 bit length
         self.inst_bin = self.inst_bin.ljust(32, '0')
-        print("Instruction Length:",len(self.inst_bin))
-        print("Complete Instruction Binary:",self.inst_bin)
+        #print("Instruction Length:",len(self.inst_bin))
+        #print("Complete Instruction Binary:",self.inst_bin)
 
         return self.inst_bin

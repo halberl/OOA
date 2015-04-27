@@ -15,6 +15,7 @@ class FileToBin:
     def __init__(self, sourcefile, binfile):
         self.sourcefile = sourcefile
         self.binfile= binfile
+        self.bin_array = []
         self.instructions=[]
 
     
@@ -28,6 +29,7 @@ class FileToBin:
 
 
     def write(self):
+
         # Open file for writing
         f = open(self.binfile, 'w')
         
@@ -64,7 +66,12 @@ class FileToBin:
             # Print constructed byte code
             print(a.inst_bin)
         
+            # return data to call
+            self.bin_array.append(a.inst_bin)
+
             # Write byte code to file with newline
             f.write(a.inst_bin + '\n')
         
         f.close()
+
+        return self.bin_array

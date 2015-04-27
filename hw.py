@@ -26,6 +26,14 @@ class mem_collection:
         #for index in range(size):
             #self.mem[index]=ALL_ZEROS
 
+
+    def save_all(self, arr):
+        '''
+        save all binary from instruction binary array into the memory
+        '''
+        for it in range (0, len(arr)):
+            self.save(it, arr[it])
+
     def load(self, addr):
         return self.mem[addr]
 
