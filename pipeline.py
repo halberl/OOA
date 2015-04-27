@@ -1,4 +1,5 @@
 from hw import register
+from classes.decode import INSTRUCTIONDecode
 
 
 class pipeline:
@@ -45,6 +46,11 @@ class pipeline:
             # Write inst_mem[stack_ptr] to inst_reg
             self.inst_reg.write(int(self.inst_mem.load(int(self.stack_ptr.read(), 2))))
 
+
+            a=INSTRUCTIONDecode(self.inst_reg.read())
+            print(a.decodeOpField())
+
+
             # Read inst_reg
             print("inst_reg: ", self.inst_reg.read())
 
@@ -59,3 +65,28 @@ class pipeline:
             # Next pass start IF stage
 
 
+    def fetch(self):
+        '''
+        Fetch current instruction from the instruction memory and place in the instruction register
+        '''
+
+
+    def decode(self):
+        '''
+        Decode instruction in the instruction register
+        '''
+
+    def execute(self):
+        '''
+        Do ALU operation specified in the instruction
+        '''
+
+    def memory(self):
+        '''
+        Do memory operations
+        '''
+
+    def writeBack(self):
+        '''
+        Do write back to registers 
+        '''
