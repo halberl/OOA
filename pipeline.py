@@ -1,5 +1,6 @@
 from hw import register
 from classes.decode import INSTRUCTIONDecode
+from classes.alu import ALU
 
 
 class pipeline:
@@ -43,50 +44,113 @@ class pipeline:
             # Display inst_mem[stack_ptr]
             #print("inst_mem[",int(self.stack_ptr.read(), 2),"]: ", self.inst_mem.load(int(self.stack_ptr.read(), 2)))
 
+            '''
+            self.fetch() does this now
             # Write inst_mem[stack_ptr] to inst_reg
             self.inst_reg.write(int(self.inst_mem.load(int(self.stack_ptr.read(), 2))))
 
-
-            a=INSTRUCTIONDecode(self.inst_reg.read())
-            print(a.decodeOpField())
-
-
             # Read inst_reg
             print("inst_reg: ", self.inst_reg.read())
+            '''
 
+            # Start instruction fetch
+            self.fetch()
+
+            # Start instruction decode
+            self.decode()
+
+            # Start instruction execution
+            self.execute()
+
+            # Start instruction memory operations
+            self.memory()
+
+            # Start instruction result write back
+            self.writeBack()
+
+            # Print New lines to seperate instructions
+            print("\n\n\n")
+
+
+            '''
             # convert stack_ptr to int, increment stack ptr, and convert back to padded str
             temp_stack_ptr = "{0:b}".format(int(str(int(self.stack_ptr.read(), 2) + 1))).rjust(32, '0')
 
             # Set new stack_ptr
             self.stack_ptr.write(str(temp_stack_ptr).rjust(32, '0'))
+            '''
 
             
 
-            # Next pass start IF stage
 
 
     def fetch(self):
         '''
         Fetch current instruction from the instruction memory and place in the instruction register
         '''
+        print("\n|----------------------|")
+        print("| Entering fetch stage |")
+        print("|----------------------|")
+        # Write inst_mem[stack_ptr] to inst_reg
+        self.inst_reg.write(int(self.inst_mem.load(int(self.stack_ptr.read(), 2))))
+
+        # print stack_ptr
+        print("Stack_ptr: ",int(self.stack_ptr.read(), 2))
+        # Read inst_reg
+        print("inst_reg: ", self.inst_reg.read())
+
+
+        
+        # convert stack_ptr to int, increment stack ptr, and convert back to padded str
+        temp_stack_ptr = "{0:b}".format(int(str(int(self.stack_ptr.read(), 2) + 1))).rjust(32, '0')
+
+        # Set new stack_ptr
+        self.stack_ptr.write(str(temp_stack_ptr).rjust(32, '0'))
+        
 
 
     def decode(self):
         '''
         Decode instruction in the instruction register
         '''
+        print("\n|-----------------------|")
+        print("| Entering decode stage |")
+        print("|-----------------------|")
+        a=INSTRUCTIONDecode(self.inst_reg.read())
+        self.op = a.decodeOpField()
+        self.dest = a.decodeDestField()
+        self.source1 = a.decodeSource1Field()
+        self.source2 = a.decodeSource2Field()
+        self.immediate = a.decodeImmediateValue()
+        a.constructInstruction()
 
     def execute(self):
         '''
         Do ALU operation specified in the instruction
         '''
+        print("\n|------------------------|")
+        print("| Entering execute stage |")
+        print("|------------------------|")
+
+        #(self, operation, destination, source1, source2) 
+        a=ALU(self.op, self.dest, self.source1, self.source2)
+        a.executeOperation()
+
+         
 
     def memory(self):
         '''
         Do memory operations
         '''
+        print("\n|-----------------------|")
+        print("| Entering memory stage |")
+        print("|-----------------------|")
+
 
     def writeBack(self):
         '''
         Do write back to registers 
         '''
+        print("\n|---------------------------|")
+        print("| Entering write back stage |")
+        print("|---------------------------|")

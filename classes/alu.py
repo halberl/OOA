@@ -65,11 +65,11 @@ class ALU(object):
         elif self.operation == "divi":
             self.divi()
         elif self.operation == "and":
-            self.and()
+            self.and1()
         elif self.operation == "or":
-            self.or()
+            self.or1()
         elif self.operation == "not":
-            self.not()
+            self.not1()
         elif self.operation == "nand":
             self.nand()
         elif self.operation == "nor":
@@ -142,15 +142,15 @@ class ALU(object):
         print("In the divi constructor")
         print(self.operation + self.destination + self.source1 + self.source2)
 
-    def and(self):
+    def and1(self):
         print("In the and constructor")
         print(self.operation + self.destination + self.source1 + self.source2)
 
-    def or(self):
+    def or1(self):
         print("In the or constructor")
         print(self.operation + self.destination + self.source1 + self.source2)
 
-    def not(self):
+    def not1(self):
         print("In the not constructor")
         print(self.operation + self.destination + self.source1 + self.source2)
 
