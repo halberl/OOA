@@ -2,7 +2,7 @@
 Filename: decode.py
 Author:   Lucas Halbert
 Date:     4/17/15
-Modified: 4/17/15
+Modified: 4/29/15
 Description: decodes binary to assembly 
 '''
 import sys
@@ -150,14 +150,14 @@ class INSTRUCTIONDecode(object):
             |--------------------------|
             '''
             # Decode Destination Field
-            self.destination = self.decodeField1()
+            destination = self.decodeField1()
 
             # Decode Source 1 & 2 Fields
-            self.source1 = self.decodeSource1Field()
-            self.source2 = self.decodeSource2Field()
+            source1 = self.decodeSource1Field()
+            source2 = self.decodeSource2Field()
             
             # Print everything 
-            print(self.inst_op,self.dest,self.source1,self.source2)
+            print(self.inst_op,destination,source1,source2)
 
 
         ###################################
@@ -174,37 +174,126 @@ class INSTRUCTIONDecode(object):
             | subi ,  $1  ,  $2  |  #34233   |
             |--------------------------------|
             '''
+            # Decode Destination Field
+            destination = self.decodeField1()
+
+            # Decode Source 1 Field
+            source1 = self.decodeSource1Field()
+
+            # Decode Immediate
+            immediate = self.decodeImmediateValue()
+
+            print(self.inst_op,destination,source1,immediate)
             
-#        elif self.inst_op == "addi":
-#            self.addi()
-#        elif self.inst_op == "subi":
-#            self.subi()
-#        elif self.inst_op == "and":
-#            self.and1()
-#        elif self.inst_op == "or":
-#            self.or1()
-#        elif self.inst_op == "not":
-#            self.not1()
-#        elif self.inst_op == "nand":
-#            self.nand()
-#        elif self.inst_op == "nor":
-#            self.nor()
-#        elif self.inst_op == "beq":
-#            self.beq()
-#        elif self.inst_op == "bne":
-#            self.bne()
-#        elif self.inst_op == "bez":
-#            self.bez()
-#        elif self.inst_op == "bnz":
-#            self.bnz()
-#        elif self.inst_op == "bgt":
-#            self.bgt()
-#        elif self.inst_op == "blt":
-#            self.blt()
-#        elif self.inst_op == "bge":
-#            self.bge()
-#        elif self.inst_op == "ble":
-#            self.ble()
+
+        ######################
+        # logical Operations #
+        ######################
+        elif (self.inst_op == "and") or (self.inst_op == "or") or (self.inst_op == "not") or (self.inst_op == "nand") or (self.inst_op == "nor"):
+            '''
+            Logical Operation Structure
+            |---------------------------|
+            | OP   , dest , src1 , src2 |
+            | and  ,  $1  ,  $2  ,  $3  |
+            | or   ,  $1  ,  $2  ,  $3  |
+            | not  ,  $1  ,  $2  ,  $3  |
+            | nand ,  $1  ,  $2  ,  $3  |
+            | nor  ,  $1  ,  $2  ,  $3  |
+            |---------------------------|
+            '''
+            
+
+
+        #####################
+        # Branch Operations #
+        #####################
+        elif (self.inst_op == "beq") or (self.inst_op == "bne") or (self.inst_op == "bez") or (self.inst_op == "bnz") or (self.inst_op == "bgt") or (self.inst_op == "blt") or (self.inst_op == "bge") or (self.inst_op == "ble"):
+            '''
+            Branch Operation Structure
+            |---------------------------|
+            | OP  , src1 , src2 , LABEL |
+            | beq ,  $1  ,  $2  , Loop  |
+            | bne ,  $1  ,  $2  , Loop  |
+            | bgt ,  $1  ,  $2  , Loop  |
+            | blt ,  $1  ,  $2  , Loop  |
+            | bge ,  $1  ,  $2  , Loop  |
+            | ble ,  $1  ,  $2  , Loop  |
+            |---------------------------|
+            | OP  , src1 ,     LABEL    |
+            | bez ,  $1  ,     Loop     | 
+            |---------------------------|
+            '''
+            if (self.inst_op == "bez") or (self.inst_op == "bnz"):
+                # Decode Source 1 Field
+                source1 = self.decodeField1()
+
+                # split source into index and source register address
+                source1 = source1.split("$")[1]
+
+                # fetch register value and convert to int
+                value1 = int(self.data_reg[source1].read(), 2)
+
+                # Compare value to zero
+                if (self.inst_op == "bez"):
+                    if value1 == 0:
+                        print("true! value == 0")
+                    else:
+                        print("false! value != 0")
+                if (self.inst_op == "bnz"):
+                    if not value1 == 0:
+                        print("true! value != 0")
+                    else:
+                        print("false! value == 0")
+            else:
+                # Decode Source 1 Field
+                source1 = self.decodeField1()
+
+                # Decode Source 2 Field
+                source2 = self.decodeSource1Field()
+
+
+                # split source into index and source register address
+                source1 = source1.split("$")[1]
+                source2 = source2.split("$")[1]
+
+                # Decode label??
+
+                # fetch register value and convert to int
+                print("source1 address",source1)
+                print("source2 address",source2)
+                value1 = int(self.data_reg[int(source1)].read(), 2)
+                value2 = int(self.data_reg[int(source2)].read(), 2)
+
+                if (self.inst_op == "beq"):
+                    if value1 == value2:
+                        print("true! value1 == value2")
+                    else:
+                        print("false! value1 != value2")
+                elif (self.inst_op == "bne"):
+                    if not value1 == value2:
+                        print("true! value1 != value2")
+                    else:
+                        print("false! value1 == value2")
+                elif (self.inst_op == "bgt"):
+                    if value1 > value2:
+                        print("true! value1 > value2")
+                    else:
+                        print("false! value1 < value2")
+                elif (self.inst_op == "blt"):
+                    if value1 < value2:
+                        print("true! value1 < value2")
+                    else:
+                        print("false! value1 > value2")
+                elif (self.inst_op == "bge"):
+                    if value1 >= value2:
+                        print("true! value1 >= value2")
+                    else:
+                        print("false! value1 <= value2")
+                elif (self.inst_op == "ble"):
+                    if value1 <= value2:
+                        print("true! value1 <= value2")
+                    else:
+                        print("false! value1 >= value2")
 
 
 ########################################################

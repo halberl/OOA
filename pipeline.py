@@ -48,7 +48,7 @@ class pipeline:
         to_end = 5
         while(to_end > 0):
 
-            print (self.inst_mem.load(int(self.stack_ptr.read(), 2)).rjust(32, '0') != "0".rjust(32, '0'))
+            print(self.inst_mem.load(int(self.stack_ptr.read(), 2)).rjust(32, '0') != "0".rjust(32, '0'))
             if not (self.inst_mem.load(int(self.stack_ptr.read(), 2)).rjust(32, '0') != "0".rjust(32, '0')):
                 to_end = to_end -1
                 print("to_end = ", to_end)
@@ -156,6 +156,13 @@ class pipeline:
             #self.source2 = a.decodeSource2Field()
             #self.immediate = a.decodeImmediateValue()
             #a.constructInstruction()
+#            self.op = a.decodeOpField()
+#            self.dest = a.decodeDestField()
+#            self.source1 = a.decodeSource1Field()
+#            self.source2 = a.decodeSource2Field()
+#            self.immediate = a.decodeImmediateValue()
+#            a.constructInstruction()
+
         else:
             print("\n|-------------------------|")
             print("| Stalled decode stage |")
