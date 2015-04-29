@@ -106,41 +106,79 @@ class INSTRUCTIONDecode(object):
             self.mem_address = (index + mem_address)
             print(mem_address)
 
+        ########################
+        # Immediate Operations #
+        ########################
+        elif (self.inst_op == "ldi") or (self.inst_op == "sti"):
+            '''
+            Immediate Operation Structure
+            |-------------------------|
+            |  OP  , dest , Immediate |
+            | ldi  ,  $2  ,  #34266   | 
+            |-------------------------|
+            '''
+            # Decode Destination Field
+            destination = self.decodeField1()
+
+            # Decode Immediate operation
+            source = self.decodeImmediate()
+            print("Source",source)
+
+            # remove # from immediate value
+            source = source.split("#")[1]
+            print("Source",source)
+
+
         #########################
         # Arithmetic Operations #
         #########################
         elif (self.inst_op == "add") or (self.inst_op == "sub") or (self.inst_op == "mul") or (self.inst_op == "div"):
             '''
             Arithmetic Operation Structure
-            |-----------------------|
-            | OP  , dest , source  |
-            | add ,  $1  ,  0($2)  |
-            |-----------------------|
-            | OP  , source , dest  |
-            | sub  ,  $1    , 0($2) |
-            |-----------------------|
-            | OP  , dest , source  |
-            | mul ,  $1  ,  0($2)  |
-            |-----------------------|
-            |  OP  , dest ,  dest   |
-            | swap ,  $1  ,  0($2)  |
-            |-----------------------|
+            |--------------------------|
+            | OP  , dest , src1 | src2 |
+            | add ,  $1  ,  $2  |  $3  |
+            |--------------------------|
+            | OP  , dest , src1 | src2 |
+            | sub  , $1  ,  $2  |  $3  |
+            |--------------------------|
+            | OP  , dest , src1 | src2 |
+            | mul ,  $1  ,  $2  |  $3  |
+            |--------------------------|
+            | OP  , dest , src1 | src2 |-----> Remainder placed in remainder register
+            | div ,  $1  ,  $2  |  $3  |
+            |--------------------------|
             '''
-#            self.add()
-#        elif self.inst_op == "sub":
-#            self.sub()
-#        elif self.inst_op == "mul":
-#            self.mul()
-#        elif self.inst_op == "div":
-#            self.div()
+            # Decode Destination Field
+            self.destination = self.decodeField1()
+
+            # Decode Source 1 & 2 Fields
+            self.source1 = self.decodeSource1Field()
+            self.source2 = self.decodeSource2Field()
+            
+            # Print everything 
+            print(self.inst_op,self.dest,self.source1,self.source2)
+
+
+        ###################################
+        # Immediate Arithmetic Operations #
+        ###################################
+        elif (self.inst_op == "addi") or (self.inst_op == "subi"):
+            '''
+            Immediate Arithmetic Operation Structure
+            |--------------------------------|
+            |  OP  , dest , src1 | immediate |
+            | addi ,  $1  ,  $2  |  #34233   |
+            |--------------------------------|
+            |  OP  , dest , src1 | immediate |
+            | subi ,  $1  ,  $2  |  #34233   |
+            |--------------------------------|
+            '''
+            
 #        elif self.inst_op == "addi":
 #            self.addi()
 #        elif self.inst_op == "subi":
 #            self.subi()
-#        elif self.inst_op == "muli":
-#            self.muli()
-#        elif self.inst_op == "divi":
-#            self.divi()
 #        elif self.inst_op == "and":
 #            self.and1()
 #        elif self.inst_op == "or":
@@ -239,7 +277,7 @@ class INSTRUCTIONDecode(object):
         This constructor decodes the immediate value field of the instruction if self.immediate = 1
         '''
         # Extract the next 5 characters of the binary instruction
-        self.inst_immediate_bin = self.instruction[15:31]
+        self.inst_immediate_bin = self.instruction[15:32]
         #print("Length:",len(str(self.inst_immediate_bin)))
         #print("Instruction Immediate Binary:",self.inst_immediate_bin)
         
