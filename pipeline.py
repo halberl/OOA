@@ -53,20 +53,25 @@ class pipeline:
             print("inst_reg: ", self.inst_reg.read())
             '''
 
-            # Start instruction fetch
-            self.fetch()
+            ###
+            # Initial values should be some sort of NULL.  If null, do nothing and return
+            ###
 
-            # Start instruction decode
-            self.decode()
-
-            # Start instruction execution
-            self.execute()
+            # Start instruction result write back
+            self.writeBack()
 
             # Start instruction memory operations
             self.memory()
 
-            # Start instruction result write back
-            self.writeBack()
+            # Start instruction execution
+            self.execute()
+
+            # Start instruction decode
+            self.decode()
+
+            # Start instruction fetch
+            self.fetch()
+
 
             # Print New lines to seperate instructions
             print("\n\n\n")
@@ -142,6 +147,20 @@ class pipeline:
         '''
         Do memory operations
         '''
+		# Read from or write to memory
+        # Needs to know 
+          # which operation to perform
+          # what value to store if any
+          # what location to store/read in memory
+
+        if ( X ):
+            #Read
+            value_to_write = self.data_mem[mem_location]
+
+        else if ( X ):
+            #Write
+            self.data_mem[mem_location] = value_to_store
+
         print("\n|-----------------------|")
         print("| Entering memory stage |")
         print("|-----------------------|")
@@ -151,6 +170,19 @@ class pipeline:
         '''
         Do write back to registers 
         '''
+        # Needs to know
+          # what register to write in
+          # what value to write
+        #Arguments
+        reg_number
+        value_to_write
+
+        #Operation
+        self.data_reg[reg_number] = value_to_write
+
+
+
         print("\n|---------------------------|")
         print("| Entering write back stage |")
         print("|---------------------------|")
+
