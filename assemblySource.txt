@@ -1,3 +1,6 @@
 add,$3,$4,$5
 addi,$3,$5,#4324
 sub,$3,$4,$5
+ldi,$2,#123
+beq,$1,$2,LOOP
+bez,$9,LABEL

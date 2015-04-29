@@ -24,6 +24,7 @@ class INSTRUCTIONEncode(object):
         fields based on the last character of the op portion. If an "i" is present, the 
         instruction is expecting field[3] to be an immediate value.
         '''
+        print("Being encoding inst: ", instruction)
         # Read and Open dictionary file relative to root of project
         self.inst_dict = json.loads(open("dictionaries/instruction_dictionary.py").read())
         # Swap keys and values of dictionary
@@ -35,6 +36,87 @@ class INSTRUCTIONEncode(object):
         # Split instruction by "," and store in inst_fields
         self.inst_fields = self.instruction.split(',')
         #print("Instruction Fields:",self.inst_fields)
+
+        self.field_array = [None]*5
+        self.field_array[0] = self.encodeOpField()
+        self.op_type = self.op_type()
+        self.field_array[1] = self.encodeRegister(1)
+
+        print("Op type is ", self.op_type)
+        # 1 is memory operation
+        if (self.op_type == 1):
+            # 3rd field is 
+            # 4th field is memory address
+            self.encodeMemory()
+        # 2 is memory operation immediate
+        elif (self.op_type == 2):
+            # 3rd field is immediate index value
+            # 4th field is memory address
+            self.field_array[2] = "00000"
+            self.field_array[3] = self.encodeMemoryImmediate()
+        
+
+        # 3 is arithmatic operation
+        elif (self.op_type == 3):
+            # 3rd field is first source register
+            # 4th field is second source register
+            self.field_array[2] = self.encodeRegister(2)
+            self.field_array[3] = self.encodeRegister(3)
+
+        # 4 is arithmatic immediate operation
+        elif (self.op_type == 4):
+            # 3rd field is source register
+            # 4th field is immediate value
+            self.field_array[2] = self.encodeRegister(2)
+            self.field_array[3] = self.encodeImmediate(3)
+
+        # 5 is branch operation
+        elif (self.op_type == 5):
+            # 3rd field is source register
+            # 4th field is 2nd source register
+            self.field_array[2] = self.encodeRegister(2)
+            self.field_array[3] = self.encodeRegister(3)
+
+        print("0 = ", self.field_array[0])
+        print("1 = ", self.field_array[1])
+        print("2 = ", self.field_array[2])
+        print("3 = ", self.field_array[3])
+        print("Instruction encoded= ", self.constructByteCode())
+
+        #return self.constructByteCode()
+
+    def encodeImmediate(self, index):
+        #
+        if int(self.inst_fields[index].split('#')[1]) > 13171:
+            print("Immediate", self.inst_fields[index],"is too big")
+            sys.exit(4)
+        
+        return "{0:b}".format(int(self.inst_fields[index].split('#')[1])).rjust(17, '0')
+
+    def encodeRegister(self, index):
+        if int(self.inst_fields[index].split('$')[1]) > 31:
+            print("Register", self.inst_fields[index],"does not exist")
+            sys.exit(4)
+        
+        return "{0:b}".format(int(self.inst_fields[index].split('$')[1])).rjust(5, '0')
+
+    def encodeMemory(self):
+        self.field_array[2] = self.inst_fields[2].split("(")[0].rjust(17, '0')
+        self.field_array[3] = self.inst_fields[2].split("(")[1].split(")")[0].split("$")[1].rjust(5, '0')
+
+        index_bin = "{0:b}".format(int(self.field_array[2])).rjust(17, '0')
+        reg_bin= "{0:b}".format(int(self.field_array[3])).rjust(5, '0')
+        return index_bin+reg_bin
+
+    def encodeMemoryImmediate(self):
+
+        return "{0:b}".format(int(self.inst_fields[2].split('#')[1])).rjust(17, '0')
+
+
+
+
+
+
 
 
     def encodeOpField(self):
@@ -53,10 +135,60 @@ class INSTRUCTIONEncode(object):
         #print("Immediate?:",self.immediate)
 
         self.inst_op_bin = self.inst_dict[self.inst_fields[0]]
+        
         #print("Instruction OP:",self.inst_fields[0])
         #print("Instruction OP Binary:",self.inst_op_bin)
 
         return self.inst_op_bin
+
+
+
+        #encodeDestField()
+
+
+
+    def op_type(self):
+
+        self.inst_op = self.inst_fields[0]
+        #########################
+        #   Memory Operations   #
+        #########################
+        if (self.inst_op == "ld") or (self.inst_op == "st") or (self.inst_op == "move") or (self.inst_op == "swap"):
+            self.op_type = 1
+
+        ########################
+        # Immediate Memory Operations #
+        ########################
+        elif (self.inst_op == "ldi") or (self.inst_op == "sti"):
+            self.op_type = 2
+
+        #########################
+        #   Arithmatic Operations   #
+        #########################
+        elif (self.inst_op == "add") or (self.inst_op == "sub") or (self.inst_op == "mul") or (self.inst_op == "div"):
+            self.op_type = 3
+
+        ###################################
+        # Immediate Arithmetic Operations #
+        ###################################
+        elif (self.inst_op == "addi") or (self.inst_op == "subi"):
+            self.op_type = 4
+
+        #########################
+        #   Logical Operations   #
+        #########################
+        #if (self.inst_op == "ld") or (self.inst_op == "st") or (self.inst_op == "move") or (self.inst_op == "swap"):
+            #
+
+
+        #########################
+        #   Branch Operations   #
+        #########################
+        if (self.inst_op == "ld") or (self.inst_op == "st") or (self.inst_op == "move") or (self.inst_op == "swap"):
+            self.op_type = 5
+            
+        return self.op_type           
+
 
 
     def encodeDestField(self):
@@ -151,12 +283,14 @@ class INSTRUCTIONEncode(object):
         '''
 
         # Combine OP, Dest, Source1, and Source2 into compiled binary
-        if self.immediate == 1:
-            self.inst_bin = self.inst_op_bin + self.inst_dest_bin + self.inst_source1_bin + self.inst_immediate_bin
-        elif self.immediate == 0:
-            self.inst_bin = self.inst_op_bin + self.inst_dest_bin + self.inst_source1_bin + self.inst_source1_bin
+        #if self.immediate == 1:
+            #self.inst_bin = self.inst_op_bin + self.inst_dest_bin + self.inst_source1_bin + self.inst_immediate_bin
+        #elif self.immediate == 0:
+            #self.inst_bin = self.inst_op_bin + self.inst_dest_bin + self.inst_source1_bin + self.inst_source1_bin
 
+        self.inst_bin = self.field_array[0] + self.field_array[1] + self.field_array[2] + self.field_array[3]
         self.inst_bin_len = len(self.inst_bin)
+
         #print("Instruction Length:",len(self.inst_bin))
 
         # Force 32 bit length
@@ -165,3 +299,6 @@ class INSTRUCTIONEncode(object):
         #print("Complete Instruction Binary:",self.inst_bin)
 
         return self.inst_bin
+
+
+

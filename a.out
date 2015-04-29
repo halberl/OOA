@@ -46,7 +46,7 @@ Finished init of FileToBin
 00101000110010000100000000000000
 01001000110010100001000011100100
 00110000110010000100000000000000
-[u'00101000110010000100000000000000', u'01001000110010100001000011100100', u'00110000110010000100000000000000']
+['00101000110010000100000000000000', '01001000110010100001000011100100', '00110000110010000100000000000000']
 True
 
 |---------------------------|
@@ -89,13 +89,14 @@ True
 |-----------------------|
 | Entering decode stage |
 |-----------------------|
-('Complete Instruction:', u'noop,$0,$0,$0')
+Instruction Op Binary: 00000
+Instruction Op: <class 'str'> noop
 
 |----------------------|
 | Entering fetch stage |
 |----------------------|
-('Stack_ptr: ', 0)
-('inst_reg: ', '00101000110010000100000000000000')
+Stack_ptr:  0
+inst_reg:  00101000110010000100000000000000
 
 
 
@@ -117,13 +118,14 @@ True
 |-----------------------|
 | Entering decode stage |
 |-----------------------|
-('Complete Instruction:', u'add,$3,$4,$4')
+Instruction Op Binary: 00101
+Instruction Op: <class 'str'> add
 
 |----------------------|
 | Entering fetch stage |
 |----------------------|
-('Stack_ptr: ', 1)
-('inst_reg: ', '01001000110010100001000011100100')
+Stack_ptr:  1
+inst_reg:  01001000110010100001000011100100
 
 
 
@@ -141,87 +143,24 @@ True
 |------------------------|
 | Entering execute stage |
 |------------------------|
-In the add constructor
-add$3$4$4
 
 |-----------------------|
 | Entering decode stage |
 |-----------------------|
-('Complete Instruction:', u'addi,$3,$5,#2162')
+Instruction Op Binary: 01001
+Instruction Op: <class 'str'> addi
 
 |----------------------|
 | Entering fetch stage |
 |----------------------|
-('Stack_ptr: ', 2)
-('inst_reg: ', '00110000110010000100000000000000')
+Stack_ptr:  2
+inst_reg:  00110000110010000100000000000000
 
 
 
 
 False
-('to_end = ', 4)
-
-|---------------------------|
-| Entering write back stage |
-|---------------------------|
-
-|-----------------------|
-| Entering memory stage |
-|-----------------------|
-
-|------------------------|
-| Entering execute stage |
-|------------------------|
-In the addi constructor
-addi$3$5$1
-
-|-----------------------|
-| Entering decode stage |
-|-----------------------|
-('Complete Instruction:', u'sub,$3,$4,$4')
-
-|----------------------|
-| Entering fetch stage |
-|----------------------|
-('Stack_ptr: ', 3)
-('inst_reg: ', '00000000000000000000000000000000')
-
-
-
-
-False
-('to_end = ', 3)
-
-|---------------------------|
-| Entering write back stage |
-|---------------------------|
-
-|-----------------------|
-| Entering memory stage |
-|-----------------------|
-
-|------------------------|
-| Entering execute stage |
-|------------------------|
-In the sub constructor
-sub$3$4$4
-
-|-----------------------|
-| Entering decode stage |
-|-----------------------|
-('Complete Instruction:', u'noop,$0,$0,$0')
-
-|----------------------|
-| Entering fetch stage |
-|----------------------|
-('Stack_ptr: ', 4)
-('inst_reg: ', '00000000000000000000000000000000')
-
-
-
-
-False
-('to_end = ', 2)
+to_end =  4
 
 |---------------------------|
 | Entering write back stage |
@@ -238,19 +177,20 @@ False
 |-----------------------|
 | Entering decode stage |
 |-----------------------|
-('Complete Instruction:', u'noop,$0,$0,$0')
+Instruction Op Binary: 00110
+Instruction Op: <class 'str'> sub
 
 |----------------------|
 | Entering fetch stage |
 |----------------------|
-('Stack_ptr: ', 5)
-('inst_reg: ', '00000000000000000000000000000000')
+Stack_ptr:  3
+inst_reg:  00000000000000000000000000000000
 
 
 
 
 False
-('to_end = ', 1)
+to_end =  3
 
 |---------------------------|
 | Entering write back stage |
@@ -267,19 +207,20 @@ False
 |-----------------------|
 | Entering decode stage |
 |-----------------------|
-('Complete Instruction:', u'noop,$0,$0,$0')
+Instruction Op Binary: 00000
+Instruction Op: <class 'str'> noop
 
 |----------------------|
 | Entering fetch stage |
 |----------------------|
-('Stack_ptr: ', 6)
-('inst_reg: ', '00000000000000000000000000000000')
+Stack_ptr:  4
+inst_reg:  00000000000000000000000000000000
 
 
 
 
 False
-('to_end = ', 0)
+to_end =  2
 
 |---------------------------|
 | Entering write back stage |
@@ -296,13 +237,74 @@ False
 |-----------------------|
 | Entering decode stage |
 |-----------------------|
-('Complete Instruction:', u'noop,$0,$0,$0')
+Instruction Op Binary: 00000
+Instruction Op: <class 'str'> noop
 
 |----------------------|
 | Entering fetch stage |
 |----------------------|
-('Stack_ptr: ', 7)
-('inst_reg: ', '00000000000000000000000000000000')
+Stack_ptr:  5
+inst_reg:  00000000000000000000000000000000
+
+
+
+
+False
+to_end =  1
+
+|---------------------------|
+| Entering write back stage |
+|---------------------------|
+
+|-----------------------|
+| Entering memory stage |
+|-----------------------|
+
+|------------------------|
+| Entering execute stage |
+|------------------------|
+
+|-----------------------|
+| Entering decode stage |
+|-----------------------|
+Instruction Op Binary: 00000
+Instruction Op: <class 'str'> noop
+
+|----------------------|
+| Entering fetch stage |
+|----------------------|
+Stack_ptr:  6
+inst_reg:  00000000000000000000000000000000
+
+
+
+
+False
+to_end =  0
+
+|---------------------------|
+| Entering write back stage |
+|---------------------------|
+
+|-----------------------|
+| Entering memory stage |
+|-----------------------|
+
+|------------------------|
+| Entering execute stage |
+|------------------------|
+
+|-----------------------|
+| Entering decode stage |
+|-----------------------|
+Instruction Op Binary: 00000
+Instruction Op: <class 'str'> noop
+
+|----------------------|
+| Entering fetch stage |
+|----------------------|
+Stack_ptr:  7
+inst_reg:  00000000000000000000000000000000
 
 
 
