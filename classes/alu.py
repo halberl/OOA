@@ -33,10 +33,12 @@ class ALU(object):
         # Initialize variables
         self.data_reg = data_reg
         self.ALU_in = ALU_in
+        self.ALU_out = []
+        if self.ALU_in == None:
+            return
         print("Self.ALU_in:",self.ALU_in)
 
         # Initialize/clear self.ALU_out before next instruction data
-        self.ALU_out = []
 
         self.executeOperation()
 
@@ -48,7 +50,10 @@ class ALU(object):
         This constructor calls the operator constructor based on the OP filed of the instruction
         '''
                 
-        if self.ALU_in[0] == "ld":
+        if self.ALU_in == None:
+            self.stall = True
+            self.noop()
+        elif self.ALU_in[0] == "ld":
             self.ld()
         elif self.ALU_in[0] == "st":
             self.st()
@@ -100,7 +105,9 @@ class ALU(object):
             self.ble()
 
 
-
+    def noop(self):
+        print("In the noop constructor")
+        self.ALU_out = self.ALU_in
 
     def ld(self):
         print("In the ld constructor")
@@ -133,6 +140,9 @@ class ALU(object):
     def add(self):
         print("In the add constructor")
 
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         # Append register destination to ALU_out
         self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
 
@@ -142,6 +152,10 @@ class ALU(object):
 
     def sub(self):
         print("In the sub constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         # Append register destination to ALU_out
         self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
 
@@ -151,6 +165,10 @@ class ALU(object):
 
     def mul(self):
         print("In the mul constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         # Append register destination to ALU_out
         self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
 
@@ -160,6 +178,10 @@ class ALU(object):
 
     def div(self):
         print("In the div constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         # Append register destination to ALU_out
         self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
 
@@ -169,6 +191,10 @@ class ALU(object):
 
     def addi(self):
         print("In the addi constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         # Append register destination to ALU_out
         self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
 
@@ -178,6 +204,10 @@ class ALU(object):
 
     def subi(self):
         print("In the subi constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
 
         # Perform arithmatic
@@ -186,26 +216,50 @@ class ALU(object):
 
     def and1(self):
         print("In the and constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         print(self.operation + self.destination + self.source1 + self.source2)
 
     def or1(self):
         print("In the or constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         print(self.operation + self.destination + self.source1 + self.source2)
 
     def not1(self):
         print("In the not constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         print(self.operation + self.destination + self.source1 + self.source2)
 
     def nand(self):
         print("In the nand constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         print(self.operation + self.destination + self.source1 + self.source2)
 
     def nor(self):
         print("In the nor constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
         print(self.operation + self.destination + self.source1 + self.source2)
 
     def beq(self):
         print("In the beq constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
 
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in
@@ -214,12 +268,20 @@ class ALU(object):
     def bne(self):
         print("In the bne constructor")
 
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
+
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in
         print(self.ALU_out)
 
     def bez(self):
         print("In the bez constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
 
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in
@@ -228,12 +290,20 @@ class ALU(object):
     def bnz(self):
         print("In the bnz constructor")
 
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
+
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in
         print(self.ALU_out)
 
     def bgt(self):
         print("In the bgt constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
 
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in
@@ -242,6 +312,10 @@ class ALU(object):
     def blt(self):
         print("In the blt constructor")
 
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
+
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in
         print(self.ALU_out)
@@ -249,12 +323,20 @@ class ALU(object):
     def bge(self):
         print("In the bge constructor")
 
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
+
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in
         print(self.ALU_out)
 
     def ble(self):
         print("In the ble constructor")
+
+        # Append instruction operation to ALU_out
+        self.ALU_out.append(self.ALU_in[0])
+
 
         # Pass branch operation to MEM stage
         self.ALU_out = self.ALU_in

@@ -20,6 +20,11 @@ def main():
 
     # Create Instruction Register
     inst_reg=register()
+    ALU_in=None # Output of ALU
+    ALU_out=None # Output of ALU
+    MEM_out=None  # Result of reading from MEM
+    WB_addr=None  # Address to write back to
+
 
     
     # Create registers
@@ -68,7 +73,7 @@ def main():
     '''
     Pipeline Starts here
     '''
-    pipeline(stack_ptr, inst_reg, data_reg, data_mem, inst_mem)
+    pipeline(stack_ptr, inst_reg, data_reg, data_mem, inst_mem, ALU_in, ALU_out, MEM_out, WB_addr)
 
     # print element 2 of instruction memory
     #print(inst_mem.load(1))

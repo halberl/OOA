@@ -288,6 +288,7 @@ class INSTRUCTIONEncode(object):
         #elif self.immediate == 0:
             #self.inst_bin = self.inst_op_bin + self.inst_dest_bin + self.inst_source1_bin + self.inst_source1_bin
 
+        print(self.field_array[0] + self.field_array[1] + self.field_array[2] + self.field_array[3])
         self.inst_bin = self.field_array[0] + self.field_array[1] + self.field_array[2] + self.field_array[3]
         self.inst_bin_len = len(self.inst_bin)
 

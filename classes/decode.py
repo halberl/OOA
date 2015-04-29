@@ -19,7 +19,7 @@ class INSTRUCTIONDecode(object):
     contains all specific bit mappings for each instruction operand. 
     '''
 
-    def __init__(self, instruction, data_reg, WB_addr):
+    def __init__(self, instruction, data_reg, WB_addr, ALU_in, ALU_out):
         '''
         This constructor initilizes the instruction variable and splits it into its proper
         fields based on the last character of the op portion. If an "i" is present, the 
@@ -46,6 +46,8 @@ class INSTRUCTIONDecode(object):
 
         # Start the decode process
         self.decodeField0()
+        print("decode-self.ALU_in",self.ALU_in)
+        #return self.ALU_in
 
 
     def decodeField0(self):
@@ -136,7 +138,7 @@ class INSTRUCTIONDecode(object):
             destination = int(self.decodeField1().split("$")[1])
 
             # Decode Immediate operation
-            immediate = int(self.decodeImmediate().split("#")[1])
+            immediate = int(self.decodeImmediateValue().split("#")[1])
 
 
             # Append destination register to ALU_in as element 1
@@ -403,7 +405,7 @@ class INSTRUCTIONDecode(object):
             sys.exit(4)
 
         # Convert the extracted binary to a register number
-        self.inst_immediate = "#" + str(int(self.inst_immediate_bin, 2))
+        self.inst_immediate = "#" + str(int(self.inst_immediate_bin))
         #print("Immediate Value:",self.inst_immediate)
 
         return self.inst_immediate

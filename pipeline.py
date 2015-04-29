@@ -7,7 +7,7 @@ class pipeline:
     '''
     This class sets up pipeline variables and controls the pipeline stages
     '''
-    def __init__(self, stack_ptr, inst_reg, data_reg, data_mem, inst_mem):
+    def __init__(self, stack_ptr, inst_reg, data_reg, data_mem, inst_mem, ALU_in, ALU_out, MEM_out, WB_addr):
         '''
         This Constructor initializes all pipeline variables
         '''
@@ -28,9 +28,10 @@ class pipeline:
         self.source2 = None
        
         # Values that come from ALU and MEM operations
-        self.ALU_out= None # Output of ALU
-        self.MEM_out= None # Result of reading from MEM
-        self.WB_addr = None # Address to write back to
+        self.ALU_in=ALU_in # Output of ALU
+        self.ALU_out=ALU_out # Output of ALU
+        self.MEM_out=MEM_out  # Result of reading from MEM
+        self.WB_addr=WB_addr  # Address to write back to
         '''
         print(self.stack_ptr.read())
         print("Inst_reg: ", self.inst_reg.read())
@@ -144,11 +145,13 @@ class pipeline:
         '''
         Decode instruction in the instruction register
         '''
+        print(self.ALU_in)
         if not (self.stall):
             print("\n|-----------------------|")
             print("| Entering decode stage |")
             print("|-----------------------|")
-            INSTRUCTIONDecode(self.inst_reg.read(), self.data_reg, self.WB_addr)
+            INSTRUCTIONDecode(self.inst_reg.read(), self.data_reg, self.WB_addr, self.ALU_in, self.ALU_out)
+            print("self.ALU_in",self.ALU_in)
             #a=INSTRUCTIONDecode(self.inst_reg.read(), self.data_reg, self.WB_addr)
             #self.op = a.decodeOpField()
             #self.dest = a.decodeDestField()
@@ -172,13 +175,14 @@ class pipeline:
         '''
         Do ALU operation specified in the instruction
         '''
+        print(self.ALU_in)
         if not (self.stall):
             print("\n|------------------------|")
             print("| Entering execute stage |")
             print("|------------------------|")
     
             #(self, operation, destination, source1, source2) 
-            a=ALU(self.op, self.dest, self.source1, self.source2)
+            a=ALU(self.data_reg, self.ALU_in)
             a.executeOperation()
 
         else:
