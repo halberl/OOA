@@ -8,7 +8,7 @@ Description: decodes binary to assembly
 import sys
 import re
 import json
-
+import hw
 
 '''
 Class declarations for each stage of the pipeline
@@ -19,7 +19,7 @@ class INSTRUCTIONDecode(object):
     contains all specific bit mappings for each instruction operand. 
     '''
 
-    def __init__(self, instruction):
+    def __init__(self, instruction, data_reg):
         '''
         This constructor initilizes the instruction variable and splits it into its proper
         fields based on the last character of the op portion. If an "i" is present, the 
@@ -27,32 +27,27 @@ class INSTRUCTIONDecode(object):
         '''
         # Read and Open dictionary file relative to root of project
         self.inst_dict = json.loads(open("dictionaries/instruction_dictionary.py").read())
+
         # Initialize instuction
         self.instruction = instruction
+        
+        # Initialize data register
+        self.data_reg = data_reg
+
         #print("Instruction:",self.instruction)
 
 
-    #def splitFields(self):
-        '''
-        This constructor splits the instruction string into usable fields.
-        '''
-        # Split instruction by "," and store in inst_fields
-        #self.inst_fields = self.instruction.split(',')
-        #print("Instruction Fields:",self.inst_fields)
-        #return self.inst_fields
-
-
-    def decodeOpField(self):
+    def decodeField0(self):
         '''
         This constructor decodes the OP field of the instruction.
         '''
         # Extract the first 5 characters of the binary instruction
-        self.inst_op_bin = self.instruction[:5]
-        #print("Instruction Op Binary:",self.inst_op_bin)
+        inst_op_bin = self.instruction[:5]
+        print("Instruction Op Binary:", inst_op_bin)
 
         # Lookup the operation of the extracted binary
-        self.inst_op = self.inst_dict[self.inst_op_bin]
-        #print("Instruction Op:",self.inst_op)
+        self.inst_op = self.inst_dict[inst_op_bin]
+        print("Instruction Op:",type(self.inst_op),self.inst_op)
         
         # Check if last character of Operator specifies immediate value
         if self.inst_op[len(self.inst_op)-1] == "i":
@@ -61,16 +56,123 @@ class INSTRUCTIONDecode(object):
             self.immediate = 0
         #print("Immediate?:",self.immediate)
 
-        return self.inst_op
+        #return self.inst_op
 
 
-    def decodeDestField(self):
+        #########################
+        #   Memory Operations   #
+        #########################
+        if (self.inst_op == "ld") or (self.inst_op == "st") or (self.inst_op == "move") or (self.inst_op == "swap"):
+            '''
+            Memory Operation Structure
+            |-----------------------|
+            |  OP  , dest , source  |
+            |  ld  ,  $1  ,  0($2)  |
+            |-----------------------|
+            |  OP  , source , dest  |
+            |  st  ,  $1    , 0($2) |
+            |-----------------------|
+            |  OP  , dest , source  |
+            | move ,  $1  ,  0($2)  |
+            |-----------------------|
+            |  OP  , dest ,  dest   |
+            | swap ,  $1  ,  0($2)  |
+            |-----------------------|
+            '''
+            # Decode Destination Field
+            destination = self.decodeField1()
+
+            # Decode Mem operation
+            source = self.decodeMem()
+            print("Source",source)
+
+            # split source into index and source register address
+            index = int(source.split("(")[0])
+            print(source.split("(")[1].split(")")[0].split("$")[1])
+            source = int(source.split("(")[1].split(")")[0].split("$")[1])
+            
+            # fetch register value and convert to int
+            print("reg address",source)
+            mem_address = int(self.data_reg[source].read(), 2)
+
+            # add index to memory address
+            self.mem_address = (index + mem_address)
+            print(mem_address)
+
+        #########################
+        # Arithmetic Operations #
+        #########################
+        elif (self.inst_op == "add") or (self.inst_op == "sub") or (self.inst_op == "mul") or (self.inst_op == "div"):
+            '''
+            Arithmetic Operation Structure
+            |-----------------------|
+            | OP  , dest , source  |
+            | add ,  $1  ,  0($2)  |
+            |-----------------------|
+            | OP  , source , dest  |
+            | sub  ,  $1    , 0($2) |
+            |-----------------------|
+            | OP  , dest , source  |
+            | mul ,  $1  ,  0($2)  |
+            |-----------------------|
+            |  OP  , dest ,  dest   |
+            | swap ,  $1  ,  0($2)  |
+            |-----------------------|
+            '''
+#            self.add()
+#        elif self.inst_op == "sub":
+#            self.sub()
+#        elif self.inst_op == "mul":
+#            self.mul()
+#        elif self.inst_op == "div":
+#            self.div()
+#        elif self.inst_op == "addi":
+#            self.addi()
+#        elif self.inst_op == "subi":
+#            self.subi()
+#        elif self.inst_op == "muli":
+#            self.muli()
+#        elif self.inst_op == "divi":
+#            self.divi()
+#        elif self.inst_op == "and":
+#            self.and1()
+#        elif self.inst_op == "or":
+#            self.or1()
+#        elif self.inst_op == "not":
+#            self.not1()
+#        elif self.inst_op == "nand":
+#            self.nand()
+#        elif self.inst_op == "nor":
+#            self.nor()
+#        elif self.inst_op == "beq":
+#            self.beq()
+#        elif self.inst_op == "bne":
+#            self.bne()
+#        elif self.inst_op == "bez":
+#            self.bez()
+#        elif self.inst_op == "bnz":
+#            self.bnz()
+#        elif self.inst_op == "bgt":
+#            self.bgt()
+#        elif self.inst_op == "blt":
+#            self.blt()
+#        elif self.inst_op == "bge":
+#            self.bge()
+#        elif self.inst_op == "ble":
+#            self.ble()
+
+
+########################################################
+
+        
+
+
+    def decodeField1(self):
         '''
         This constructor decodes the destination field of the instruction
         '''
         # Extract the next 5 characters of the binary instruction
         self.inst_dest_bin = self.instruction[5:10]
-        #print("Instruction Dest Binary:",self.inst_dest_bin)
         
         # Error check to confirm that destination field does not contain a register that does not exist(>32)
         if int(self.inst_dest_bin, 2) > 31:
@@ -80,7 +182,7 @@ class INSTRUCTIONDecode(object):
 
         # Convert the extracted binary to a register number
         self.inst_dest = "$" + str(int(self.inst_dest_bin, 2))
-        #print("Instruction Dest:",self.inst_dest)
+        print("Instruction Dest:",self.inst_dest)
 
         return self.inst_dest
 
@@ -144,6 +246,35 @@ class INSTRUCTIONDecode(object):
         #print("Immediate Value:",self.inst_immediate)
 
         return self.inst_immediate
+
+
+    def decodeMem(self):
+        '''
+        This constructor decodes the index and register location for a memory operation
+        '''
+        # Extract characters 11-27 of binary as index
+        source_index_bin = self.instruction[11:27]
+        
+        # Error check to confirm that destination field does not contain a register that does not exist(>32)
+        if int(source_index_bin, 2) > 131071:
+            print("Cannot use index numbers large than 131071")
+            sys.exit(4)
+
+        # Convert extracted binary to an int
+        source_index = str(int(source_index_bin, 2)) + "("
+        
+        # Extract characters 28-32 of binary as source register
+        source_reg_bin = self.instruction[28:32]
+
+        # Convert extracted binary to a register number
+        source_reg = "$" + str(int(source_reg_bin, 2)) + ")"
+
+        # Combine index and register number
+        source = source_index + source_reg
+
+        print("mem operation decode:", source)
+
+        return source
 
 
     def constructInstruction(self):
