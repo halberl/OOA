@@ -17,6 +17,7 @@ class FileToBin:
         self.binfile= binfile
         self.bin_array = []
         self.instructions=[]
+        print ("\nFinished init of FileToBin")
 
     
     def read(self):

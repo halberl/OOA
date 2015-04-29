@@ -18,6 +18,19 @@ class pipeline:
         self.data_mem = data_mem
         self.inst_mem = inst_mem
 
+        self.need_stall = False
+        self.stall = False
+
+        # Values that feed into ALU
+        self.op = None
+        self.dest = None
+        self.source1 = None
+        self.source2 = None
+       
+        # Values that come from ALU and MEM operations
+        self.ALU_out= None # Output of ALU
+        self.MEM_out= None # Result of reading from MEM
+        self.WB_addr = None # Address to write back to
         '''
         print(self.stack_ptr.read())
         print("Inst_reg: ", self.inst_reg.read())
@@ -93,24 +106,25 @@ class pipeline:
         '''
         Fetch current instruction from the instruction memory and place in the instruction register
         '''
-        print("\n|----------------------|")
-        print("| Entering fetch stage |")
-        print("|----------------------|")
-        # Write inst_mem[stack_ptr] to inst_reg
-        self.inst_reg.write(int(self.inst_mem.load(int(self.stack_ptr.read(), 2))))
-
-        # print stack_ptr
-        print("Stack_ptr: ",int(self.stack_ptr.read(), 2))
-        # Read inst_reg
-        print("inst_reg: ", self.inst_reg.read())
-
-
-        
-        # convert stack_ptr to int, increment stack ptr, and convert back to padded str
-        temp_stack_ptr = "{0:b}".format(int(str(int(self.stack_ptr.read(), 2) + 1))).rjust(32, '0')
-
-        # Set new stack_ptr
-        self.stack_ptr.write(str(temp_stack_ptr).rjust(32, '0'))
+        if not (self.stall):
+            print("\n|----------------------|")
+            print("| Entering fetch stage |")
+            print("|----------------------|")
+            # Write inst_mem[stack_ptr] to inst_reg
+            self.inst_reg.write(int(self.inst_mem.load(int(self.stack_ptr.read(), 2))))
+    
+            # print stack_ptr
+            print("Stack_ptr: ",int(self.stack_ptr.read(), 2))
+            # Read inst_reg
+            print("inst_reg: ", self.inst_reg.read())
+    
+    
+            
+            # convert stack_ptr to int, increment stack ptr, and convert back to padded str
+            temp_stack_ptr = "{0:b}".format(int(str(int(self.stack_ptr.read(), 2) + 1))).rjust(32, '0')
+    
+            # Set new stack_ptr
+            self.stack_ptr.write(str(temp_stack_ptr).rjust(32, '0'))
         
 
 
@@ -118,28 +132,30 @@ class pipeline:
         '''
         Decode instruction in the instruction register
         '''
-        print("\n|-----------------------|")
-        print("| Entering decode stage |")
-        print("|-----------------------|")
-        a=INSTRUCTIONDecode(self.inst_reg.read())
-        self.op = a.decodeOpField()
-        self.dest = a.decodeDestField()
-        self.source1 = a.decodeSource1Field()
-        self.source2 = a.decodeSource2Field()
-        self.immediate = a.decodeImmediateValue()
-        a.constructInstruction()
+        if not (self.stall):
+            print("\n|-----------------------|")
+            print("| Entering decode stage |")
+            print("|-----------------------|")
+            a=INSTRUCTIONDecode(self.inst_reg.read(), self.WB_addr)
+            self.op = a.decodeOpField()
+            self.dest = a.decodeDestField()
+            self.source1 = a.decodeSource1Field()
+            self.source2 = a.decodeSource2Field()
+            self.immediate = a.decodeImmediateValue()
+            a.constructInstruction()
 
     def execute(self):
         '''
         Do ALU operation specified in the instruction
         '''
-        print("\n|------------------------|")
-        print("| Entering execute stage |")
-        print("|------------------------|")
-
-        #(self, operation, destination, source1, source2) 
-        a=ALU(self.op, self.dest, self.source1, self.source2)
-        a.executeOperation()
+        if not (self.stall):
+            print("\n|------------------------|")
+            print("| Entering execute stage |")
+            print("|------------------------|")
+    
+            #(self, operation, destination, source1, source2) 
+            a=ALU(self.op, self.dest, self.source1, self.source2)
+            a.executeOperation()
 
          
 
@@ -147,12 +163,21 @@ class pipeline:
         '''
         Do memory operations
         '''
-		# Read from or write to memory
-        # Needs to know 
-          # which operation to perform
-          # what value to store if any
-          # what location to store/read in memory
 
+        if not (self.stall):
+            self.need_stall = False
+            self.stall = False
+
+        print("\n|-----------------------|")
+        print("| Entering memory stage |")
+        print("|-----------------------|")
+
+  		# Read from or write to memory
+        # Needs to know 
+        # which operation to perform
+        # what value to store if any
+        # what location to store/read in memory
+        """
         if ( X ):
             #Read
             value_to_write = self.data_mem[mem_location]
@@ -160,10 +185,8 @@ class pipeline:
         else if ( X ):
             #Write
             self.data_mem[mem_location] = value_to_store
+        """
 
-        print("\n|-----------------------|")
-        print("| Entering memory stage |")
-        print("|-----------------------|")
 
 
     def writeBack(self):
@@ -174,12 +197,22 @@ class pipeline:
           # what register to write in
           # what value to write
         #Arguments
+        """     
         reg_number
         value_to_write
 
         #Operation
         self.data_reg[reg_number] = value_to_write
+        """
 
+        #Stall cycle completed.  Remove stall flag
+        if (self.stall):
+            self.stall = False
+            self.need_stall = False
+
+        #Stall needed.
+        if (self.need_stall):
+            self.stall = True
 
 
         print("\n|---------------------------|")

@@ -19,7 +19,7 @@ class INSTRUCTIONDecode(object):
     contains all specific bit mappings for each instruction operand. 
     '''
 
-    def __init__(self, instruction):
+    def __init__(self, instruction, WB_addr):
         '''
         This constructor initilizes the instruction variable and splits it into its proper
         fields based on the last character of the op portion. If an "i" is present, the 
@@ -31,6 +31,7 @@ class INSTRUCTIONDecode(object):
         self.instruction = instruction
         #print("Instruction:",self.instruction)
 
+        self.WB_addr = WB_addr
 
     #def splitFields(self):
         '''
@@ -160,5 +161,16 @@ class INSTRUCTIONDecode(object):
 
         #print("Instruction Length:",len(self.inst))
         print("Complete Instruction:",self.inst)
-
+        
+        self.checkIfStallNeeded()
         return self.inst
+
+
+    def checkIfStallNeeded(self):
+        
+        
+        if ((self.inst_source1 or self.inst_source2) == self.WB_addr):
+            self.need_stall = True
+
+
+
