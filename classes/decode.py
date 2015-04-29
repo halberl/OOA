@@ -41,6 +41,8 @@ class INSTRUCTIONDecode(object):
 
         #print("Instruction:",self.instruction)
 
+        self.decodeField0()
+
 
     def decodeField0(self):
         '''
