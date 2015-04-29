@@ -39,8 +39,12 @@ class INSTRUCTIONDecode(object):
         # Initialize Write Back address
         self.WB_addr = WB_addr
 
+        # Create ALU_IN array
+        self.ALU_in = []
+
         #print("Instruction:",self.instruction)
 
+        # Start the decode process
         self.decodeField0()
 
 
@@ -57,13 +61,16 @@ class INSTRUCTIONDecode(object):
         print("Instruction Op:",type(self.inst_op),self.inst_op)
         
         # Check if last character of Operator specifies immediate value
-        if self.inst_op[len(self.inst_op)-1] == "i":
-            self.immediate = 1
-        else:
-            self.immediate = 0
+        #if self.inst_op[len(self.inst_op)-1] == "i":
+        #    self.immediate = 1
+        #else:
+        #    self.immediate = 0
         #print("Immediate?:",self.immediate)
 
         #return self.inst_op
+
+        # Append instruction operation to ALU_in as element 0
+        self.ALU_in.append(self.inst_op)
 
 
         #########################
@@ -87,15 +94,15 @@ class INSTRUCTIONDecode(object):
             |-----------------------|
             '''
             # Decode Destination Field
-            destination = self.decodeField1()
+            destination = int(self.decodeField1().split("$")[1])
 
             # Decode Mem operation
             source = self.decodeMem()
             print("Source",source)
 
             # split source into index and source register address
-            index = int(source.split("(")[0])
-            print(source.split("(")[1].split(")")[0].split("$")[1])
+            index = int(source.split("(")[0], 2)
+            print("source?:",source.split("(")[1].split(")")[0].split("$")[1])
             source = int(source.split("(")[1].split(")")[0].split("$")[1])
             
             # fetch register value and convert to int
@@ -104,7 +111,15 @@ class INSTRUCTIONDecode(object):
 
             # add index to memory address
             self.mem_address = (index + mem_address)
-            print(mem_address)
+            print(self.mem_address)
+
+            # Append destination register to ALU_in as element 1
+            self.ALU_in.append(destination)
+            # Append index to ALU_in as element 2
+            self.ALU_in.append(index)
+            # Append source to ALU_in as element 3
+            self.ALU_in.append(source)
+
 
         ########################
         # Immediate Operations #
@@ -118,15 +133,16 @@ class INSTRUCTIONDecode(object):
             |-------------------------|
             '''
             # Decode Destination Field
-            destination = self.decodeField1()
+            destination = int(self.decodeField1().split("$")[1])
 
             # Decode Immediate operation
-            source = self.decodeImmediate()
-            print("Source",source)
+            immediate = int(self.decodeImmediate().split("#")[1])
 
-            # remove # from immediate value
-            source = source.split("#")[1]
-            print("Source",source)
+
+            # Append destination register to ALU_in as element 1
+            self.ALU_in.append(destination)
+            # Append immediate value to ALU_in as element 2
+            self.ALU_in.append(immediate)
 
 
         #########################
@@ -145,20 +161,26 @@ class INSTRUCTIONDecode(object):
             | OP  , dest , src1 | src2 |
             | mul ,  $1  ,  $2  |  $3  |
             |--------------------------|
-            | OP  , dest , src1 | src2 |-----> Remainder placed in remainder register
+            | OP  , dest , src1 | src2 |-----> Remainder placed in remainder register???
             | div ,  $1  ,  $2  |  $3  |
             |--------------------------|
             '''
             # Decode Destination Field
-            destination = self.decodeField1()
+            destination = int(self.decodeField1().split("$")[1])
 
             # Decode Source 1 & 2 Fields
-            source1 = self.decodeSource1Field()
-            source2 = self.decodeSource2Field()
+            source1 = int(self.decodeSource1Field().split("$")[1])
+            source2 = int(self.decodeSource2Field().split("$")[1])
             
             # Print everything 
             print(self.inst_op,destination,source1,source2)
 
+
+            # Append destination register to ALU_in as element 1
+            self.ALU_in.append(destination)
+            # Append source1 and source2 to ALU_in as elements 2 and 3
+            self.ALU_in.append(source1) 
+            self.ALU_in.append(source2) 
 
         ###################################
         # Immediate Arithmetic Operations #
@@ -175,15 +197,23 @@ class INSTRUCTIONDecode(object):
             |--------------------------------|
             '''
             # Decode Destination Field
-            destination = self.decodeField1()
+            destination = int(self.decodeField1().split("$")[1])
 
             # Decode Source 1 Field
-            source1 = self.decodeSource1Field()
+            source1 = int(self.decodeSource1Field().split("$")[1])
 
             # Decode Immediate
-            immediate = self.decodeImmediateValue()
+            immediate = int(self.decodeImmediateValue().split("#")[1])
 
             print(self.inst_op,destination,source1,immediate)
+
+            # Append destination register to ALU_in as element 1
+            self.ALU_in.append(destination)
+            # Append source1 to ALU_in as element 2
+            self.ALU_in.append(source1)
+            # Append immediate to ALU_in as element 3
+            self.ALU_in.append(immediate)
+
             
 
         ######################
@@ -225,10 +255,7 @@ class INSTRUCTIONDecode(object):
             '''
             if (self.inst_op == "bez") or (self.inst_op == "bnz"):
                 # Decode Source 1 Field
-                source1 = self.decodeField1()
-
-                # split source into index and source register address
-                source1 = source1.split("$")[1]
+                source1 = int(self.decodeField1().split("$")[1])
 
                 # fetch register value and convert to int
                 value1 = int(self.data_reg[source1].read(), 2)

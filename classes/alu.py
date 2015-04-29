@@ -2,12 +2,13 @@
 Filename: alu.py
 Author:   Lucas Halbert
 Date:     4/22/15
-Modified: 4/23/15
+Modified: 4/29/15
 Description: Class declarations for different functions of the ALU (arithmetic logic unit) 
 '''
 import sys
 import re
 import json
+import hw
 
 #NEEDS TO FLAG HAZARDS
 
@@ -19,76 +20,83 @@ class ALU(object):
     This class is used to perform arithmetic operations on instructions
     '''
 
-    def __init__(self, operation, destination, source1, source2):
+    def __init__(self, data_reg, ALU_in):
         '''
         This constructor initilizes the instruction variable and splits it into its proper
         fields based on the last character of the op portion. If an "i" is present, the 
         instruction is expecting field[3] to be an immediate value.
         '''
         # Read and Open dictionary file relative to root of project
-        self.inst_dict = json.loads(open("dictionaries/instruction_dictionary.py").read())
+        #self.inst_dict = json.loads(open("dictionaries/instruction_dictionary.py").read())
 
+        
         # Initialize variables
-        self.operation = operation
-        self.destination = destination
-        self.source1 = source1
-        self.source2 = source2
+        self.data_reg = data_reg
+        self.ALU_in = ALU_in
+        print("Self.ALU_in:",self.ALU_in)
 
+        # Initialize/clear self.ALU_out before next instruction data
+        self.ALU_out = []
+
+        self.executeOperation()
+
+        # Clear self.ALU_in for new incoming data
+        self.ALU_in = []
 
     def executeOperation(self):
         '''
         This constructor calls the operator constructor based on the OP filed of the instruction
         '''
                 
-        if self.operation == "ld":
+        if self.ALU_in[0] == "ld":
             self.ld()
-        elif self.operation == "st":
+        elif self.ALU_in[0] == "st":
             self.st()
-        elif self.operation == "move":
+        elif self.ALU_in[0] == "move":
             self.move()
-        elif self.operation == "swap":
+        elif self.ALU_in[0] == "swap":
             self.swap()
-        elif self.operation == "add":
+        elif self.ALU_in[0] == "add":
             self.add()
-        elif self.operation == "sub":
+        elif self.ALU_in[0] == "sub":
             self.sub()
-        elif self.operation == "mul":
+        elif self.ALU_in[0] == "mul":
             self.mul()
-        elif self.operation == "div":
+        elif self.ALU_in[0] == "div":
             self.div()
-        elif self.operation == "addi":
+        elif self.ALU_in[0] == "addi":
             self.addi()
-        elif self.operation == "subi":
+        elif self.ALU_in[0] == "subi":
             self.subi()
-        elif self.operation == "muli":
+        elif self.ALU_in[0] == "muli":
             self.muli()
-        elif self.operation == "divi":
+        elif self.ALU_in[0] == "divi":
             self.divi()
-        elif self.operation == "and":
+        elif self.ALU_in[0] == "and":
             self.and1()
-        elif self.operation == "or":
+        elif self.ALU_in[0] == "or":
             self.or1()
-        elif self.operation == "not":
+        elif self.ALU_in[0] == "not":
             self.not1()
-        elif self.operation == "nand":
+        elif self.ALU_in[0] == "nand":
             self.nand()
-        elif self.operation == "nor":
+        elif self.ALU_in[0] == "nor":
             self.nor()
-        elif self.operation == "beq":
+        elif self.ALU_in[0] == "beq":
             self.beq()
-        elif self.operation == "bne":
+        elif self.ALU_in[0] == "bne":
             self.bne()
-        elif self.operation == "bez":
+        elif self.ALU_in[0] == "bez":
             self.bez()
-        elif self.operation == "bnz":
+        elif self.ALU_in[0] == "bnz":
             self.bnz()
-        elif self.operation == "bgt":
+        elif self.ALU_in[0] == "bgt":
             self.bgt()
-        elif self.operation == "blt":
+        elif self.ALU_in[0] == "blt":
             self.blt()
-        elif self.operation == "bge":
+        elif self.ALU_in[0] == "bge":
             self.bge()
-        elif self.operation == "ble":
+        elif self.ALU_in[0] == "ble":
             self.ble()
 
 
@@ -96,51 +104,85 @@ class ALU(object):
 
     def ld(self):
         print("In the ld constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        
+        # Pass mem operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def st(self):
         print("In the st constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        
+        # Pass mem operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def move(self):
         print("In the move constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        
+        # Pass mem operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def swap(self):
         print("In the swap constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        
+        # Pass mem operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def add(self):
         print("In the add constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Append register destination to ALU_out
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
+
+        # Perform arithmatic
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[2]].read(), 2) + int(self.data_reg[self.ALU_in[3]].read(), 2))
+        print(self.ALU_out)
 
     def sub(self):
         print("In the sub constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        # Append register destination to ALU_out
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
+
+        # Perform arithmatic
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[2]].read(), 2) - int(self.data_reg[self.ALU_in[3]].read(), 2))
+        print(self.ALU_out)
 
     def mul(self):
         print("In the mul constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        # Append register destination to ALU_out
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
+
+        # Perform arithmatic
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[2]].read(), 2) * int(self.data_reg[self.ALU_in[3]].read(), 2))
+        print(self.ALU_out)
 
     def div(self):
         print("In the div constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        # Append register destination to ALU_out
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
+
+        # Perform arithmatic
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[2]].read(), 2) / int(self.data_reg[self.ALU_in[3]].read(), 2))
+        print(self.ALU_out)
 
     def addi(self):
         print("In the addi constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        # Append register destination to ALU_out
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
+
+        # Perform arithmatic
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[2]].read(), 2) + int(self.ALU_in[3]))
+        print(self.ALU_out)
 
     def subi(self):
         print("In the subi constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[1]].read(), 2))
 
-    def muli(self):
-        print("In the muli constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
-
-    def divi(self):
-        print("In the divi constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+        # Perform arithmatic
+        self.ALU_out.append(int(self.data_reg[self.ALU_in[2]].read(), 2) - int(self.ALU_in[3]))
+        print(self.ALU_out)
 
     def and1(self):
         print("In the and constructor")
@@ -164,32 +206,56 @@ class ALU(object):
 
     def beq(self):
         print("In the beq constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def bne(self):
         print("In the bne constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def bez(self):
         print("In the bez constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def bnz(self):
         print("In the bnz constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def bgt(self):
         print("In the bgt constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def blt(self):
         print("In the blt constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def bge(self):
         print("In the bge constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
 
     def ble(self):
         print("In the ble constructor")
-        print(self.operation + self.destination + self.source1 + self.source2)
+
+        # Pass branch operation to MEM stage
+        self.ALU_out = self.ALU_in
+        print(self.ALU_out)
