@@ -18,7 +18,7 @@ class pipeline:
         self.data_mem = data_mem
         self.inst_mem = inst_mem
 
-        self.need_stall = False
+        self.need_stall = True
         self.stall = False
 
         # Values that feed into ALU
@@ -125,6 +125,10 @@ class pipeline:
     
             # Set new stack_ptr
             self.stack_ptr.write(str(temp_stack_ptr).rjust(32, '0'))
+        else:
+            print("\n|-------------------------|")
+            print("| Stalled fetch stage |")
+            print("|-------------------------|")
         
 
 
@@ -143,6 +147,10 @@ class pipeline:
             self.source2 = a.decodeSource2Field()
             self.immediate = a.decodeImmediateValue()
             a.constructInstruction()
+        else:
+            print("\n|-------------------------|")
+            print("| Stalled decode stage |")
+            print("|-------------------------|")
 
     def execute(self):
         '''
@@ -157,7 +165,10 @@ class pipeline:
             a=ALU(self.op, self.dest, self.source1, self.source2)
             a.executeOperation()
 
-         
+        else:
+            print("\n|-------------------------|")
+            print("| Stalled execute stage |")
+            print("|-------------------------|")
 
     def memory(self):
         '''
@@ -165,28 +176,30 @@ class pipeline:
         '''
 
         if not (self.stall):
-            self.need_stall = False
-            self.stall = False
 
-        print("\n|-----------------------|")
-        print("| Entering memory stage |")
-        print("|-----------------------|")
-
-  		# Read from or write to memory
-        # Needs to know 
-        # which operation to perform
-        # what value to store if any
-        # what location to store/read in memory
-        """
-        if ( X ):
-            #Read
-            value_to_write = self.data_mem[mem_location]
-
-        else if ( X ):
-            #Write
-            self.data_mem[mem_location] = value_to_store
-        """
-
+            print("\n|-----------------------|")
+            print("| Entering memory stage |")
+            print("|-----------------------|")
+    
+      		# Read from or write to memory
+            # Needs to know 
+            # which operation to perform
+            # what value to store if any
+            # what location to store/read in memory
+            """
+            if ( X ):
+                #Read
+                value_to_write = self.data_mem[mem_location]
+    
+            else if ( X ):
+                #Write
+                self.data_mem[mem_location] = value_to_store
+            """
+    
+        else:
+            print("\n|-------------------------|")
+            print("| Stalled memory stage |")
+            print("|-------------------------|")
 
 
     def writeBack(self):
