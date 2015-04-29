@@ -46,26 +46,26 @@ class FileToBin:
             a=INSTRUCTIONEncode(inst)
         
             # Encode operation field
-            a.encodeOpField()
+            #a.encodeOpField()
         
             # Encode destination field
-            a.encodeDestField()
+            #a.encodeDestField()
         
             # Encode source1 field
-            a.encodeSource1Field()
+            #a.encodeSource1Field()
         
-            if a.immediate == 0:
+            #if a.immediate == 0:
                 # Encode source2 field
-                a.encodeSource2Field()
-            elif a.immediate == 1:
+                #a.encodeSource2Field()
+            #elif a.immediate == 1:
                 # Encode immediate value field
-                a.encodeImmediateValue()
+                #a.encodeImmediateValue()
         
             # Construct binary representation of instruction
-            a.constructByteCode()
+            #a.constructByteCode()
         
             # Print constructed byte code
-            print(a.inst_bin)
+            #print(a.inst_bin)
         
             # return data to call
             self.bin_array.append(a.inst_bin)
