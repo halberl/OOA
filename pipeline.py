@@ -45,7 +45,15 @@ class pipeline:
         '''
         This Constructor starts the pipeline, and increments the stack_ptr to keep track of instruction execution
         '''
-        while(self.inst_mem.load(int(self.stack_ptr.read(), 2)).rjust(32, '0') != "0".rjust(32, '0')):
+        to_end = 5
+        while(to_end > 0):
+
+            print self.inst_mem.load(int(self.stack_ptr.read(), 2)).rjust(32, '0') != "0".rjust(32, '0')
+            if not (self.inst_mem.load(int(self.stack_ptr.read(), 2)).rjust(32, '0') != "0".rjust(32, '0')):
+                to_end = to_end -1
+                print("to_end = ", to_end)
+            else:
+                to_end = 5
             #print("Compare: ",self.inst_mem.load(int(self.stack_ptr.read(), 2)).rjust(32, '0'), "to", "0".rjust(32, '0'))
 
             # Place inst_mem[stack_ptr] into inst_reg
@@ -186,16 +194,18 @@ class pipeline:
             # which operation to perform
             # what value to store if any
             # what location to store/read in memory
+
+            # X is output of ALU.  Instructs whether to read or write or neither from memory
             """
             if ( X ):
                 #Read
-                value_to_write = self.data_mem[mem_location]
+                mem_out = self.data_mem[mem_location]
     
             else if ( X ):
                 #Write
-                self.data_mem[mem_location] = value_to_store
-            """
+                self.data_mem[mem_location] = alu_out
     
+            """
         else:
             print("\n|-------------------------|")
             print("| Stalled memory stage |")

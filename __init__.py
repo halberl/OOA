@@ -49,7 +49,6 @@ def main():
     print("\n\nRead assembly file and convert to binary")
     f = FileToBin(SOURCE_FILE, BIN_FILE)
 
-    print("\nCreated f")
 
     # Read source file
     f.read()

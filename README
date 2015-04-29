@@ -1,0 +1,61 @@
+#################################
+School --------------------- SUNY Polytechnic Institute
+Class  --------------------- ETC 429 - Computer Architecture
+Professor ------------------ Dr. Abdallaah
+#################################
+Team:
+     Dario Cvijanovic
+     Lucas Halbert
+
+############################
+
+HOW TO:
+To execute type in the following comamnd:
+
+python __init__.py assemblySource.txt 
+
+############################
+
+
+assemblySource.txt is where the assembly source code needs to be written
+
+__init__.py initializes the hardware for the simulated computer
+
+The number of registers and the size of the data and instruction memories can be edited here.
+
+After __init__.py completes the initialiation process, it calls pipeline.py
+
+Pipeline.py has some values initialized as well.  These are for storing values between 
+
+pipeline stages.
+
+
+
+
+
+##############################
+
+Design Decisions
+
+* Structural Hazards
+Seperate memories for instructions and data.
+This is a standard approach and prevents 
+structural hazards.
+
+* Data Hazards
+When the decode function is called, it compares its source registers with the source
+register of the write
+
+
+*
+Our pipeline has one main loop that it cycles through.  Each iteration of the loop represents
+one clock cycle.
+Each stage of the pipeline is called in this loop. The order they are executed in is:
+
+1- Write Back
+2- Memory
+3- Execute
+4- Instruction Decode
+5- Instruction Fetch
+
+
